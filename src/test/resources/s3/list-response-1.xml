@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+    <Name>sm-int-test</Name>
+    <Prefix></Prefix>
+    <Marker></Marker>
+    <MaxKeys>1000</MaxKeys>
+    <IsTruncated>false</IsTruncated>
+    <Contents>
+        <Key>S3AgentIntegrationSpec.txt</Key>
+        <LastModified>2012-01-22T11:27:48.000Z</LastModified>
+        <ETag>&quot;aec6d6dae4095e6939c212bac307c718&quot;</ETag>
+        <Size>20</Size>
+        <Owner>
+            <ID>97a7865c7014847063e0a33e96307925687e58561abe3eb09fe2fa9aaa7cbb8c</ID>
+            <DisplayName>simplemachines232</DisplayName>
+        </Owner>
+        <StorageClass>STANDARD</StorageClass>
+    </Contents>
+</ListBucketResult>
