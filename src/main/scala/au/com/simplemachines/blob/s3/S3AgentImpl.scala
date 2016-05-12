@@ -66,8 +66,8 @@ class S3AgentImpl(restService: RestOps, accessKey: String, secretKey: String, re
     val queryString = (prefix.map(("prefix", _)) ::marker.map(("marker", _)) ::delimiter.map(("delimiter", _)) ::maxKeys.map(("max-keys", _)) :: Nil)
       .flatten
       .map {
-      case (k, v) => k + "=" + v
-    }.mkString("&")
+        case (k, v) => k + "=" + v
+      }.mkString("&")
 
     val response = S3HttpRequest(bucketName, "/?" + queryString, Credentials(accessKey, secretKey), region = region)
       .execute(restService)
@@ -80,13 +80,17 @@ class S3AgentImpl(restService: RestOps, accessKey: String, secretKey: String, re
 
     val bucketName = (listingBucketResult \ "Name").text
 
-    ObjectListing(bucketName, (listingBucketResult \\ "Contents") map {
-      contentsNode =>
-        S3ObjectSummary(
-          bucketName,
-          (contentsNode \ "Key").text,
-          (contentsNode \ "Size").text.toInt)
-    })
+    ObjectListing(bucketName = bucketName,
+      objectSummaries = (listingBucketResult \\ "Contents") map {
+        contentsNode =>
+          S3ObjectSummary(
+            bucketName,
+            (contentsNode \ "Key").text,
+            (contentsNode \ "Size").text.toInt)
+      },
+      commonPrefixes = (listingBucketResult \\ "CommonPrefixes") map {
+        prefixNode => (prefixNode \ "Prefix").text
+      })
   }
 
   // --------------------------------------------------------------------------
