@@ -16,6 +16,11 @@ trait S3Agent {
    **/
   def put(bucketName: String, key: String, contentLength: Long, in: InputStream, contentType: String, cacheControl: Option[String] = None)
 
+  /**
+    * This implementation of the PUT operation creates a copy of an object that is already stored in Amazon S3.
+    * A PUT copy operation is the same as performing a GET and then a PUT.
+    */
+  def putCopy(bucketName: String, key: String, source: String)
 
   /**
    * Get the [[S3Object]] at key.

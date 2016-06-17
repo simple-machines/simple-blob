@@ -42,6 +42,12 @@ class InMemoryBlobService(expiryMinutes: Int) extends AbstractBaseBlobService {
       ByteStreams.toByteArray(Channels.newInputStream(in))))
   }
 
+  override def copy(source: BKey, destination: BKey) = {
+    val entry = get(source)
+
+    store.put(destination, entry)
+  }
+
   def read(key: BKey): ReadableByteChannel = Channels.newChannel(new ByteArrayInputStream(get(key)._2))
 
   def getInfo(key: BKey): BInfo = get(key)._1.toBInfo(key)

@@ -82,6 +82,13 @@ trait BlobService {
   def update(key: BKey, in: ReadableByteChannel, contentLength: Long, contentType: String, cacheControl: String)
 
   /**
+    * Copy a blob.
+    * @param source the key of the source blob.
+    * @param destination the key of the destination blob.
+    */
+  def copy(source: BKey, destination: BKey)
+
+  /**
    * Get a NIO handle to read bytes from a Blob.
    *
    * @param key the key of the Blob.

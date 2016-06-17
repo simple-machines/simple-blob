@@ -29,6 +29,17 @@ class S3AgentImpl(restService: RestOps, accessKey: String, secretKey: String, re
     }
   }
 
+  override def putCopy(bucketName: String, key: String, source: String) = {
+    val response =
+      S3HttpRequest(bucketName, pathForKey(key), Credentials(accessKey, secretKey), "PUT",
+        amzHeaders = Map("x-amz-copy-source" -> List(pathForKey(bucketName + "/" + source))))
+        .execute(restService)
+
+    if (!response.isSuccessful) {
+      throw new RuntimeException("Unsuccessful put of " + key + " got " + response.statusCode + " " + response.statusMessage + "\n" + response.getResponseBodyAsString)
+    }
+  }
+
   // --------------------------------------------------------------------------
 
   override def get(bucketName: String, key: String): Option[S3Object] = {
@@ -115,7 +126,8 @@ private[s3] case class S3HttpRequest(bucketName: String,
                                      credentials: Credentials,
                                      method: String = "GET",
                                      postData: Option[PostData] = None,
-                                     region: String = "s3")(implicit clock: Clock) {
+                                     region: String = "s3",
+                                     amzHeaders: Map[String, List[String]] = Map.empty)(implicit clock: Clock) {
 
   // The "virtual" host for bucket (i.e. foo.s3.amazonaws.com).
   val host = S3AgentImpl.virtualHostForBucket(bucketName, region)
@@ -125,10 +137,10 @@ private[s3] case class S3HttpRequest(bucketName: String,
 
   // The HTTP headers. To be passed to RestMate.
   val headers = {
-    // Presently we don't use 'amz' headers anywhere -- there is support for them in S3AuthKeyFactory though.
     val cResource = makeCanonicalResource(bucketName, path.split('?')(0), "")
     val cType = for (pd <- postData) yield pd.contentType
-    val reqStr = makeStringToSign(method, date, cResource, "", cType.getOrElse(""))
+    val cHeaders = makeCanonicalAmzHeaders(amzHeaders)
+    val reqStr = makeStringToSign(method, date, cResource, cHeaders, cType.getOrElse(""))
 
     val builder = collection.mutable.ListBuffer(
       "Authorization" -> makeAuthorization(credentials.accessKey, credentials.secretKey, reqStr),
@@ -140,6 +152,10 @@ private[s3] case class S3HttpRequest(bucketName: String,
         ("Content-Length" -> pd.length.toString) +=
         ("Content-Type" -> pd.contentType) +=
         ("Cache-Control" -> pd.cacheControl)
+    }
+
+    for ((n, vs) <- amzHeaders; v <- vs) {
+      builder += n -> v
     }
 
     builder.toList

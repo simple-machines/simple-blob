@@ -32,6 +32,25 @@ class S3AgentImplSpec extends org.specs2.mutable.Specification with Mockito {
     }
   }
 
+  "PUT Object - Copy" should {
+
+    "fire off a PUT request with correct headers to the buckets virtual URL" in new S3AgentImplScope {
+      restOps.put(===("https://foo.s3.amazonaws.com/key.txt"), any[RestMateRequestOptions]) returns
+        new RestMateResponse(200, "OK", Map("Content-Type" -> "text/plain"), Some("CONTENT".getBytes))
+
+      val requestBody = new ByteArrayInputStream("CONTENT".getBytes)
+      agent.putCopy("foo", "key.txt", "source.txt")
+
+      there was one(restOps).put(===("https://foo.s3.amazonaws.com/key.txt"), ===(RestMateRequestOptions(
+        headers = ("Authorization", "AWS ACCESS_KEY:DwK+Gb8Y1F+7e2SBQNSe4M/xUSY=") ::
+                  ("Host", "foo.s3.amazonaws.com") ::
+                  ("Date", "Mon, 12 Jan 1970 13:46:40 +0000") ::
+                  ("x-amz-copy-source", "/foo%2Fsource.txt") ::
+                  Nil,
+        body = None)))
+    }
+  }
+
   "GET Object" should {
 
     "GET an object and return a corresponding S3Object" in new S3AgentImplScope {

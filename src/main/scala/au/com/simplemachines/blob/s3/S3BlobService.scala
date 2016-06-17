@@ -39,6 +39,10 @@ class S3BlobService(s3Agent: S3Agent, mimeTypeLookup: MimeTypeLookup, bucketName
     s3Agent.put(bucketName, key.key, contentLength, Channels.newInputStream(in), contentType, Option(cacheControl))
   }
 
+  override def copy(source: BKey, destination: BKey) = {
+    s3Agent.putCopy(bucketName, destination.key, source.key)
+  }
+
   override def read(key: BKey): ReadableByteChannel = {
     val blob = s3Agent.get(bucketName, key.key) getOrElse (
       throw new NullPointerException("No entity at key:" + key))
