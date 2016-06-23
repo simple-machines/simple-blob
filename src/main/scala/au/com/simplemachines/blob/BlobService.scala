@@ -112,4 +112,10 @@ trait BlobService {
    * @return the Binfo for a Blob.
    */
   def getInfo(key: BKey): BInfo
+
+  /**
+    * Delete a blob.
+    * @param key the key to delete.
+    */
+  def delete(key: BKey)
 }

@@ -57,6 +57,10 @@ class InMemoryBlobService(expiryMinutes: Int) extends AbstractBaseBlobService {
     require(entry != null, "Keys must first be allocated. This store doesn't know about your key.")
     entry
   }
+
+  def delete(key: BKey) = {
+    store.invalidate(key)
+  }
 }
 
 private[mem] case class InMemoryBlobDescriptor(name: String, mimeType: String, size: Long) {

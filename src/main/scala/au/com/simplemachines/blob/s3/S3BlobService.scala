@@ -57,4 +57,7 @@ class S3BlobService(s3Agent: S3Agent, mimeTypeLookup: MimeTypeLookup, bucketName
     new BInfo(key, summary.contentType, summary.name, Instant.ofEpochMilli(summary.lastModified), summary.size)
   }
 
+  override def delete(key: BKey) = {
+    s3Agent.delete(bucketName, key.key)
+  }
 }
