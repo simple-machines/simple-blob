@@ -4,14 +4,16 @@ organization := "au.com.simplemachines"
 
 scalaVersion := "2.11.7"
 
+crossScalaVersions := Seq("2.11.7", "2.12.2")
+
 libraryDependencies ++= {
   Seq(
     "com.google.guava" % "guava" % "18.0",
     "com.google.code.findbugs" % "jsr305" % "2.0.0",
-    "org.scala-lang.modules" %% "scala-xml" % "1.0.3",
+    "org.scala-lang.modules" %% "scala-xml" % "1.0.5",
     "au.com.simplemachines" %% "simple-net" % "1.0.0",
-    "org.specs2" %% "specs2-core" % "3.6.2" % "test",
-    "org.specs2" %% "specs2-mock" % "3.6.2" % "test"
+    "org.specs2" %% "specs2-core" % "3.8.9" % "test",
+    "org.specs2" %% "specs2-mock" % "3.8.9" % "test"
   )
 }
 
