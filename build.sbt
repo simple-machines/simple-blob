@@ -17,6 +17,8 @@ libraryDependencies ++= {
   )
 }
 
+resolvers += "simplemachines releases" at "https://nexus.simplemachines.com.au/content/repositories/releases"
+
 publishMavenStyle := true
 
 publishTo := Some {
