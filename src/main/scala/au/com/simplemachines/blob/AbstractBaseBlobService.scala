@@ -23,17 +23,17 @@ abstract class AbstractBaseBlobService(mimeTypeLookup: MimeTypeLookup = new UrlM
     }
   }
 
-  def update(key: BKey, in: ReadableByteChannel, contentLength: Long) {
+  def update(key: BKey, in: ReadableByteChannel, contentLength: Long): Unit = {
     val info = getInfo(key)
     update(key, in, contentLength, info.mimeType)
   }
 
-  def update(key: BKey, in: ReadableByteChannel, contentLength: Long, contentType: String, cacheControl: String) {
+  def update(key: BKey, in: ReadableByteChannel, contentLength: Long, contentType: String, cacheControl: String): Unit = {
     throw new UnsupportedOperationException("The blob service you are using does not support setting cache control header, feel free to implement it.")
   }
 
   @throws(classOf[IOException])
-  def readInto(key: BKey, out: WritableByteChannel) {
+  def readInto(key: BKey, out: WritableByteChannel): Unit = {
     val in = read(key)
     try {
       copy(in, out)
@@ -47,7 +47,7 @@ abstract class AbstractBaseBlobService(mimeTypeLookup: MimeTypeLookup = new UrlM
     }
   }
 
-  def copy(from: ReadableByteChannel, to: WritableByteChannel) = {
+  def copy(from: ReadableByteChannel, to: WritableByteChannel): Long = {
     val buf = ByteBuffer.allocate(4096)
 
     var total = 0L

@@ -14,16 +14,16 @@ abstract class DelegatingWritableByteChannelWrapper extends WritableByteChannel 
 
   @throws(classOf[IOException])
   def write(src: ByteBuffer): Int = {
-    return cBuffer.write(src)
+    cBuffer.write(src)
   }
 
   def isOpen: Boolean = {
-    return cBuffer.isOpen
+    cBuffer.isOpen
   }
 
   @throws(classOf[IOException])
-  def close {
-    cBuffer.close
+  def close(): Unit = {
+    cBuffer.close()
     handleBuffer(bos.toByteArray)
   }
 

@@ -1,14 +1,13 @@
 package au.com.simplemachines.blob
 
 import java.io.IOException
-import java.nio.channels.ReadableByteChannel
-import java.nio.channels.WritableByteChannel
+import java.nio.channels.{ReadableByteChannel, WritableByteChannel}
 
 /**
- * A simple non-blocking Blob store.
- * <p/>
- * For simplicity, write is a locking operation and read is not.
- */
+  * A simple non-blocking Blob store.
+  * <p/>
+  * For simplicity, write is a locking operation and read is not.
+  */
 object BlobService {
   val CACHE_FOREVER: String = "max-age=31556926"
   val CACHE_REVALIDATE: String = "no-cache"
@@ -16,6 +15,7 @@ object BlobService {
 }
 
 trait BlobService {
+
   /**
    * Allocate a new blob for the provided name and provide a BKey for accessing it.
    * <p/>
@@ -58,7 +58,7 @@ trait BlobService {
    * @param in            the channel to read from.
    * @param contentLength the length of in.
    */
-  def update(key: BKey, in: ReadableByteChannel, contentLength: Long)
+  def update(key: BKey, in: ReadableByteChannel, contentLength: Long): Unit
 
   /**
    * Update the blob at provided key with in.
@@ -68,7 +68,7 @@ trait BlobService {
    * @param contentLength the length of in.
    * @param contentType   the content type.
    */
-  def update(key: BKey, in: ReadableByteChannel, contentLength: Long, contentType: String)
+  def update(key: BKey, in: ReadableByteChannel, contentLength: Long, contentType: String): Unit
 
   /**
    * Update the blob at provided key with in.
@@ -79,14 +79,14 @@ trait BlobService {
    * @param contentType   the content type.
    * @param cacheControl  the cache control header to set
    */
-  def update(key: BKey, in: ReadableByteChannel, contentLength: Long, contentType: String, cacheControl: String)
+  def update(key: BKey, in: ReadableByteChannel, contentLength: Long, contentType: String, cacheControl: String): Unit
 
   /**
     * Copy a blob.
     * @param source the key of the source blob.
     * @param destination the key of the destination blob.
     */
-  def copy(source: BKey, destination: BKey)
+  def copy(source: BKey, destination: BKey): Unit
 
   /**
    * Get a NIO handle to read bytes from a Blob.
@@ -117,5 +117,25 @@ trait BlobService {
     * Delete a blob.
     * @param key the key to delete.
     */
-  def delete(key: BKey)
+  def delete(key: BKey): Unit
+
+  /**
+    * Lists all blobs starting with prefix
+    *
+    * @param prefix
+    * @param delimiter
+    * @param maxKeys
+    */
+  def listForPrefix(prefix: String,
+                    delimiter: String = "/",
+                    marker: Option[String] = None,
+                    maxKeys: Option[Int] = None): BListings
+
+  /**
+    *
+    * @param key
+    * @return
+    */
+  def exists(key: BKey): Boolean
+
 }
